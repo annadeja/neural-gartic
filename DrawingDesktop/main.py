@@ -1,21 +1,23 @@
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QResizeEvent, QPaintEvent, QMouseEvent, QColor, QPixmap
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QDesktopWidget, QPushButton, QGroupBox, QSlider
+from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QResizeEvent, QPaintEvent, QMouseEvent, QColor, QPixmap, QFont
+from PyQt5.QtCore import Qt, QPoint, QSize
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QDesktopWidget, QPushButton, QGroupBox, QSlider, QLabel, QStatusBar
 import sys
 from colorsys import rgb_to_hsv, hsv_to_rgb
-
+import os
+from datetime import datetime
 
 class MainWindow(QMainWindow):
     def __init__(self, size, parent=None):
         super().__init__(parent)
 
         self.setWindowTitle('NeuralGartic')
-        self.setWindowIcon(QIcon("neuralGarticFull.png"))
+        self.setWindowIcon(QIcon("resources\\neuralGarticFull.png"))
 
         self.windowSize = size
         self.setFixedSize(size[0], size[1])
         self.center()
 
+        self.init_status_bar()
         self.init_image_widget()
         self.init_tools()
 
@@ -28,16 +30,21 @@ class MainWindow(QMainWindow):
         rect.moveCenter(rect_center)
         self.move(rect.topLeft())
 
+    def init_status_bar(self):
+        self.status_bar = QStatusBar(self)
+        self.setStatusBar(self.status_bar)
+        self.status_bar.showMessage("Time to draw!")
+
     def init_image_widget(self):
-        img_size = (int(0.7 * self.windowSize[0]), int(self.windowSize[1]))
+        img_size = (int(0.7 * self.windowSize[0]), int(0.98 * self.windowSize[1]))
         img = ImageWidget(img_size, self)
         img.setGeometry(0, 0, img_size[0], img_size[1])
-
+        img.status_bar = self.status_bar
         self.drawing_widget = img
 
     def init_tools(self):
         self.tools = QGroupBox(self)
-        self.tools.setGeometry(int(0.7 * self.windowSize[0]), 0, int(0.3 * self.windowSize[0]), self.windowSize[1])
+        self.tools.setGeometry(int(0.7 * self.windowSize[0]), 0, int(0.3 * self.windowSize[0]), int(self.windowSize[1]))
 
         palette_pos = (int(0.73 * self.windowSize[0]), int(0.01 * self.windowSize[1]))
         palette_size = (int(0.25 * self.windowSize[0]), int(0.25 * self.windowSize[1]))
@@ -54,23 +61,32 @@ class MainWindow(QMainWindow):
         self.size_slider.setMinimum(2)
         self.size_slider.setMaximum(20)
         self.size_slider.setSingleStep(1)
-        self.size_slider.setGeometry(int(0.73 * self.windowSize[0]), int(0.5 * self.windowSize[1]), int(0.25 * self.windowSize[0]), int(0.05 * self.windowSize[1]))
+        self.size_slider.setGeometry(int(0.73 * self.windowSize[0]), int(0.55 * self.windowSize[1]), int(0.25 * self.windowSize[0]), int(0.05 * self.windowSize[1]))
         self.size_slider.setOrientation(Qt.Horizontal)
         self.size_slider.valueChanged.connect(self.drawing_widget.size_changed)
 
+        self.size_slider_label = QLabel(self)
+        self.size_slider_label.setText("Brush size")
+        self.size_slider_label.setFont(QFont("Timer", 12))
+        self.size_slider_label.setGeometry(int(0.82 * self.windowSize[0]), int(0.5 * self.windowSize[1]), int(0.1 * self.windowSize[0]), int(0.05 * self.windowSize[1]))
+
         self.eraser = QPushButton(self)
-        self.eraser.setGeometry(int(0.84 * self.windowSize[0]), int(0.75 * self.windowSize[1]), int(0.05 * self.windowSize[0]), int(0.04 * self.windowSize[1]))
-        self.eraser.setText("Eraser")
+        self.eraser.setGeometry(int(0.83 * self.windowSize[0]), int(0.35 * self.windowSize[1]), int(0.05 * self.windowSize[0]), int(0.05 * self.windowSize[1]))
+        #self.eraser.setText("Eraser")
+        self.eraser.setIcon(QIcon("resources\\eraser_icon.png"))
+        self.eraser.setIconSize(QSize(int(0.75 * self.eraser.geometry().width()), int(0.75 * self.eraser.geometry().height())))
         self.eraser.clicked.connect(self.drawing_widget.pick_eraser)
 
         self.clear_button = QPushButton(self)
-        self.clear_button.setGeometry(int(0.84 * self.windowSize[0]), int(0.8 * self.windowSize[1]), int(0.05 * self.windowSize[0]), int(0.04 * self.windowSize[1]))
-        self.clear_button.setText("Clear")
+        self.clear_button.setGeometry(int(0.75 * self.windowSize[0]), int(0.8 * self.windowSize[1]), int(0.2 * self.windowSize[0]), int(0.06 * self.windowSize[1]))
+        self.clear_button.setText("Clear drawing")
+        self.clear_button.setFont(QFont("Times", 12))
         self.clear_button.clicked.connect(self.drawing_widget.clear)
 
         self.save_button = QPushButton(self)
-        self.save_button.setGeometry(int(0.84 * self.windowSize[0]), int(0.9 * self.windowSize[1]), int(0.1 * self.windowSize[0]), int(0.04 * self.windowSize[1]))
+        self.save_button.setGeometry(int(0.75 * self.windowSize[0]), int(0.9 * self.windowSize[1]), int(0.2 * self.windowSize[0]), int(0.06 * self.windowSize[1]))
         self.save_button.setText("Save to png")
+        self.save_button.setFont(QFont("Times", 12))
         self.save_button.clicked.connect(self.drawing_widget.save_img)
 
 
@@ -78,6 +94,8 @@ class ImageWidget(QWidget):
     def __init__(self, size, parent=None):
         super().__init__(parent)
         self.setMouseTracking(True)
+
+        self.status_bar = None
 
         self.image = QPixmap(size[0], size[1])
         self.image.fill(Qt.white)
@@ -199,7 +217,11 @@ class ImageWidget(QWidget):
         self.radius = val
 
     def save_img(self):
-        self.image.save("NeuralGarticDrawing.png", "PNG")
+        now = datetime.now()
+        img_file_name = "drawings\\" + now.strftime("%Y%m%d_%H%M%S") + ".png"
+        self.image.save(img_file_name, "PNG")
+        dir_path = os.path.realpath(img_file_name)
+        self.status_bar.showMessage("Saved img: {}".format(dir_path))
 
 
 class ColorPaletteHSWidget(QWidget):
@@ -212,7 +234,7 @@ class ColorPaletteHSWidget(QWidget):
         self.image_widget: ImageWidget = None
         self.last_mouse_pos = None
 
-        self.v = 0.5
+        self.v = 1.0
 
     def resizeEvent(self, event: QResizeEvent) -> None:
         super().resizeEvent(event)
@@ -238,6 +260,16 @@ class ColorPaletteHSWidget(QWidget):
         self.image_widget.color = QColor(int(color[0] * 255.0), int(color[1] * 255.0), int(color[2] * 255.0))
 
         self.last_mouse_pos = event.pos()
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if event.buttons() and Qt.LeftButton:
+            h = event.pos().x() / self.paletteSize[0]
+            s = (self.paletteSize[1] - event.pos().y()) / self.paletteSize[1]
+
+            color = hsv_to_rgb(h, s, self.v)
+            self.image_widget.color = QColor(int(color[0] * 255.0), int(color[1] * 255.0), int(color[2] * 255.0))
+
+            self.last_mouse_pos = event.pos()
 
 
 class ColorPaletteVWidget(QWidget):
@@ -285,7 +317,7 @@ class ColorPaletteVWidget(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    window = MainWindow((800, 600))
+    window = MainWindow((1200, 900))
     window.show()
     app.exec_()
 
