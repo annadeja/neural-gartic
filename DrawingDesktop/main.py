@@ -10,6 +10,8 @@ import cv2 as cv
 
 
 class MainWindow(QMainWindow):
+    """Class for the main Qt window."""
+
     def __init__(self, size, parent=None):
         super().__init__(parent)
 
@@ -25,20 +27,30 @@ class MainWindow(QMainWindow):
         self.init_tools()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """Mouse press event callback for main window.
+        :param event Callback mouse event
+        """
+
         print('aaa')
 
     def center(self):
+        """This method centers window in the user's monitor."""
+
         rect = self.frameGeometry()
         rect_center = QDesktopWidget().availableGeometry().center()
         rect.moveCenter(rect_center)
         self.move(rect.topLeft())
 
     def init_status_bar(self):
+        """Method that adds status bar to the main window."""
+
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage("Time to draw!")
 
     def init_image_widget(self):
+        """Mathod that creates widget that user uses for drawing."""
+
         img_size = (int(0.7 * self.windowSize[0]), int(0.98 * self.windowSize[1]))
         img = ImageWidget(img_size, self)
         img.setGeometry(0, 0, img_size[0], img_size[1])
@@ -46,6 +58,8 @@ class MainWindow(QMainWindow):
         self.drawing_widget = img
 
     def init_tools(self):
+        """In this method various tools are created - widgets, buttons, etc."""
+
         self.tools = QGroupBox(self)
         self.tools.setGeometry(int(0.7 * self.windowSize[0]), 0, int(0.3 * self.windowSize[0]), int(self.windowSize[1]))
 
@@ -101,6 +115,8 @@ class MainWindow(QMainWindow):
 
 
 class ImageWidget(QWidget):
+    """Class for the main Qt widget. User will use it to create a drawing."""
+
     def __init__(self, size, parent=None):
         super().__init__(parent)
         self.setMouseTracking(True)
@@ -117,17 +133,25 @@ class ImageWidget(QWidget):
         self.radius = 2
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        """Qt callback for the resize event."""
+
         super().resizeEvent(event)
 
     def paintEvent(self, event: QPaintEvent) -> None:
+        """Qt callback for the paint event."""
+
         painter = QPainter(self)
         painter.drawPixmap(self.rect(), self.image)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse press event. It saves the mouse position for later use."""
+
         if event.button() == Qt.LeftButton:
             self.lastPoint = event.pos()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse move event. It's the main method that allows user to draw."""
+
         painter = QPainter(self.image)
         if event.buttons() and Qt.LeftButton:
             if self.lastPoint is None:
@@ -209,24 +233,40 @@ class ImageWidget(QWidget):
             # print('sss')
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse release event."""
+
         if event.button() == Qt.LeftButton:
             self.drawing = False
 
     def fill_with_color(self, color: QColor):
+        """Method that fills all the ImageWidget object with specific color.
+        :param color A color to fill with.
+        """
+
         self.image.fill(color)
 
     def clear(self):
+        """Method that clears the drawing."""
+
         self.image.fill(Qt.white)
         self.update()
 
     def pick_eraser(self):
+        """Methods that changed the brush color to white."""
+        
         self.color = Qt.white
 
     def size_changed(self, val):
+        """Method that changes the brush size.
+        :param val New size value.
+        """
+
         print(val)
         self.radius = val
 
     def save_img(self):
+        """Method that saves the drawing to png file."""
+
         if not os.path.exists("drawings\\"):
             os.makedirs("drawings\\")
 
@@ -242,6 +282,8 @@ class ImageWidget(QWidget):
 
 
 class ColorPaletteHSWidget(QWidget):
+    """Class for the palette that allows user to change the brush color (HS in HSV)."""
+
     def __init__(self, palette_size, parent=None):
         super().__init__(parent)
         self.setMouseTracking(True)
@@ -254,9 +296,13 @@ class ColorPaletteHSWidget(QWidget):
         self.v = 1.0
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        """Qt callback for the resize event."""
+
         super().resizeEvent(event)
 
     def paintEvent(self, event: QPaintEvent) -> None:
+        """Qt callback for the paint event. It draws the palette in the widget."""
+
         super().paintEvent(event)
         painter = QPainter(self)
 
@@ -270,6 +316,8 @@ class ColorPaletteHSWidget(QWidget):
                 painter.drawPoint(i, j)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse press event. It changes the HS component of HSV brush color."""
+
         h = event.pos().x() / self.paletteSize[0]
         s = (self.paletteSize[1] - event.pos().y()) / self.paletteSize[1]
 
@@ -279,6 +327,8 @@ class ColorPaletteHSWidget(QWidget):
         self.last_mouse_pos = event.pos()
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse move event. It changes the HS component of HSV brush color."""
+
         if event.buttons() and Qt.LeftButton:
             h = event.pos().x() / self.paletteSize[0]
             s = (self.paletteSize[1] - event.pos().y()) / self.paletteSize[1]
@@ -290,6 +340,8 @@ class ColorPaletteHSWidget(QWidget):
 
 
 class ColorPaletteVWidget(QWidget):
+    """Class for the palette that allows user to change the brush color (V in HSV)."""
+
     def __init__(self, palette_size, parent=None):
         super().__init__(parent)
         self.setMouseTracking(True)
@@ -302,9 +354,13 @@ class ColorPaletteVWidget(QWidget):
         self.isPressed = False
 
     def resizeEvent(self, event: QResizeEvent) -> None:
+        """Qt callback for the resize event."""
+
         super().resizeEvent(event)
 
     def paintEvent(self, event: QPaintEvent) -> None:
+        """Qt callback for the paint event. It draws the palette in the widget."""
+
         super().paintEvent(event)
         painter = QPainter(self)
 
@@ -317,6 +373,8 @@ class ColorPaletteVWidget(QWidget):
                 painter.drawPoint(i, j)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse press event. It changes the V component of HSV brush color."""
+
         self.paletteWidget.v = event.pos().x() / self.paletteSize[0]
         self.paletteWidget.update()
         self.last_mouse_pos = event.pos()
@@ -324,16 +382,21 @@ class ColorPaletteVWidget(QWidget):
         self.isPressed = True
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse move event. It changes the V component of HSV brush color."""
+
         if event.buttons() and Qt.LeftButton and self.isPressed:
             self.paletteWidget.v = event.pos().x() / self.paletteSize[0]
             self.paletteWidget.update()
             self.last_mouse_pos = event.pos()
 
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+        """Qt callback for the mouse release event."""
+
         self.isPressed = False
 
 
 def main():
+    """Main function that creates Qt application."""
     app = QApplication(sys.argv)
     window = MainWindow((1200, 900))
     window.show()
