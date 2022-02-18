@@ -1,8 +1,4 @@
 var searchData=
 [
-<<<<<<< Updated upstream
-  ['networkcontainer_3',['NetworkContainer',['../classmain_1_1_network_container.html',1,'main']]]
-=======
-  ['networkcontainer_30',['NetworkContainer',['../classmain_1_1_network_container.html',1,'main']]]
->>>>>>> Stashed changes
+  ['datasetprocessor_49',['DatasetProcessor',['../class_dataset_processor_1_1_dataset_processor.html',1,'DatasetProcessor']]]
 ];

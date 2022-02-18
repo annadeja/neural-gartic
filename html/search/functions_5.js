@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['plot_5fdata_41',['plot_data',['../classmain_1_1_network_container.html#ae5f810419014525dfd770e3c2309de1b',1,'main::NetworkContainer']]],
-  ['process_5fimage_42',['process_image',['../class_dataset_processor_1_1_dataset_processor.html#a105a827a42ea1a280d96336490d4dd4d',1,'DatasetProcessor::DatasetProcessor']]]
+  ['label_5fimage_67',['label_image',['../class_dataset_processor_1_1_dataset_processor.html#addd2ab9818759b7f31465060e5045ef6',1,'DatasetProcessor::DatasetProcessor']]]
 ];
