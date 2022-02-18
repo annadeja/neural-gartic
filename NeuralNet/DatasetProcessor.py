@@ -49,18 +49,16 @@ class DatasetProcessor(object):
         return image, image_label
 
     def process_image(self, image):
-        image = tf.image.decode_jpeg(image, channels = 3)
+        image = tf.image.decode_jpeg(image, channels = 1)
         image = tf.image.convert_image_dtype(image, tf.float32)
         image = tf.image.random_flip_left_right(image)
         image = tf.image.random_flip_up_down(image)
-        #image = tf.image.random_brightness(image, max_delta = 0.3)
-        #image = tf.image.random_saturation(image, 0.0, 0.3)
         image = tf.image.rot90(image, tf.random.uniform(shape=[], minval=0, maxval=4, dtype=tf.int32))
         return tf.image.resize(image, [self.width, self.height])
     
     def process_test_image(self, file_path):
         image = tf.io.read_file(file_path)
-        image = tf.image.decode_jpeg(image, channels = 3)
+        image = tf.image.decode_jpeg(image, channels = 1)
         image = tf.image.convert_image_dtype(image, tf.float32)
         return tf.image.resize(image, [self.width, self.height])
 

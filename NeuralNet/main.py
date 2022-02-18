@@ -1,9 +1,10 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D, BatchNormalization
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import regularizers
 from DatasetProcessor import DatasetProcessor
+from bing_image_downloader import downloader
 
 import os
 import sys
@@ -20,9 +21,9 @@ class NetworkContainer(object):
         super().__init__()
 
         self.batch_size = 5
-        self.epochs = 25
-        self.height = 500
-        self.width = 500
+        self.epochs = 150
+        self.height = 200
+        self.width = 200
 
         self.path = path
         self.model = None
@@ -43,7 +44,7 @@ class NetworkContainer(object):
         
         if self.model == None:
             self.model = self.create_model()
-            self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3), loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
+            self.model.compile(optimizer = tf.keras.optimizers.Adam(learning_rate=1e-5), loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True), metrics=['accuracy'])
 
         self.model.summary()
 
@@ -82,22 +83,35 @@ class NetworkContainer(object):
 
     def create_model(self):
         return Sequential([
-            Conv2D(32, 3, padding='same', activation='relu', input_shape=(self.height, self.width, 3)),
-            MaxPooling2D(),
-            Dropout(0.5),
-            Conv2D(32, 3, padding='same', activation='relu'),
-            MaxPooling2D(),
-            Conv2D(16, 3, padding='same', activation='relu'),
-            MaxPooling2D(),
-            Conv2D(16, 3, padding='same', activation='relu'),
-            MaxPooling2D(),
-            Conv2D(8, 3, padding='same', activation='relu'),
-            MaxPooling2D(),
-            Conv2D(8, 3, padding='same', activation='relu'),
-            MaxPooling2D(),
+            Conv2D(16, (7, 7), padding='same', activation='relu', strides=(2, 2), input_shape=(self.height, self.width, 1), kernel_regularizer=regularizers.l2(0.001)),
+            BatchNormalization(),
+            #MaxPooling2D(),
+            #Conv2D(128, 3, padding='same', activation='relu'),
+            #MaxPooling2D(),
+            #Conv2D(16, 3, padding='same', activation='relu'),
+            #MaxPooling2D(),
+            #Conv2D(128, 3, padding='same', activation='relu'),
+            #MaxPooling2D(),
+            Conv2D(32, (5,5), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.001)),
+            #BatchNormalization(),
+            #MaxPooling2D(),
+            #Conv2D(32, (3,3), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.0001)),
+            Dropout(0.25),
+            Conv2D(64, (5,5), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.001)),
+            #Conv2D(64, (3,3), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.0001)),
+            #MaxPooling2D(),
+            #BatchNormalization(),
+            Dropout(0.25),
+            Conv2D(128, (3,3), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.001)),
+            #Conv2D(128, (3,3), padding='same', activation='relu', strides=(2, 2), kernel_regularizer=regularizers.l2(0.001)),
+            #MaxPooling2D(),
             Dropout(0.5),
             Flatten(),
-            Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+            Dense(512, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+            #Dense(256, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+            #Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+            #Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
+            #Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.001)),
             Dropout(0.5),
             Dense(len(self.dataset_processor.classes), activation='softmax')
             ])
@@ -131,7 +145,11 @@ class NetworkContainer(object):
         return self.epochs
 
 def main():
+    #print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+    #downloader.download("watermelondrawing", limit=70,  output_dir='D:\\Program Files\\neural-gartic\\NeuralNet\\data\\train\\watermelon', adult_filter_off=True, force_replace=False, timeout=1000, verbose=True)
     network_container = NetworkContainer(os.getcwd() + "\\data")
+    network_container.train_network()
+    network_container.save_model("modelv1")
 
 if __name__ == "__main__":
     main()
