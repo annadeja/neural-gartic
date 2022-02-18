@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         """Mouse press event callback for main window.
-        :param event Callback mouse event
+        @param event Callback mouse event
         """
 
         print('aaa')
@@ -240,7 +240,7 @@ class ImageWidget(QWidget):
 
     def fill_with_color(self, color: QColor):
         """Method that fills all the ImageWidget object with specific color.
-        :param color A color to fill with.
+        @param color A color to fill with.
         """
 
         self.image.fill(color)
@@ -258,7 +258,7 @@ class ImageWidget(QWidget):
 
     def size_changed(self, val):
         """Method that changes the brush size.
-        :param val New size value.
+        @param val New size value.
         """
 
         print(val)

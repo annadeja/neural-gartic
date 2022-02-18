@@ -25,8 +25,8 @@ def game():
 
 def predict_class(image) -> str:
     """Function that predicts what user has drawn.
-    :param image an image of user's drawing.
-    :return str -> prediction
+    @param image an image of user's drawing.
+    @return str -> prediction
     """
     model = tf.keras.models.load_model(NET_MODEL_PATH)
     if model != None:
