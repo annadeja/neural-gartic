@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['width_28',['width',['../class_dataset_processor_1_1_dataset_processor.html#a3c7640b45ec6240c06d8182e8c1bbf8b',1,'DatasetProcessor.DatasetProcessor.width()'],['../classmain_1_1_network_container.html#ac5b0903041eec497d3881cb77a5b1d62',1,'main.NetworkContainer.width()']]]
+  ['save_5fimg_38',['save_img',['../classmain_1_1_image_widget.html#aff36f9d6605fce2fa87b187dcfc1dcf4',1,'main::ImageWidget']]],
+  ['save_5fmodel_39',['save_model',['../class_network_container_1_1_network_container.html#affb01c88c77bb9a4b71e5f349051cb6e',1,'NetworkContainer::NetworkContainer']]],
+  ['size_5fchanged_40',['size_changed',['../classmain_1_1_image_widget.html#a980e878064198e7926f9e5ff618d4e51',1,'main::ImageWidget']]]
 ];

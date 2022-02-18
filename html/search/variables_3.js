@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['epochs_48',['epochs',['../classmain_1_1_network_container.html#a301b986af6c96a7024e80152fde92970',1,'main::NetworkContainer']]]
+  ['epochs_84',['epochs',['../class_network_container_1_1_network_container.html#ad44895e2fe7d3551719e2ddebf772e42',1,'NetworkContainer::NetworkContainer']]]
 ];

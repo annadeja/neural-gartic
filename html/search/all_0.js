@@ -1,8 +1,4 @@
 var searchData=
 [
-<<<<<<< Updated upstream
-  ['datasetprocessor_0',['DatasetProcessor',['../class_dataset_processor_1_1_dataset_processor.html',1,'DatasetProcessor']]]
-=======
-  ['_5f_5finit_5f_5f_0',['__init__',['../class_dataset_processor_1_1_dataset_processor.html#a4b1fded0a6a59c629c28f22776af19d9',1,'DatasetProcessor.DatasetProcessor.__init__()'],['../classmain_1_1_network_container.html#a7b6caa2671ba0646f72a6eec092ef1f4',1,'main.NetworkContainer.__init__()']]]
->>>>>>> Stashed changes
+  ['_5f_5finit_5f_5f_0',['__init__',['../class_dataset_processor_1_1_dataset_processor.html#a4b1fded0a6a59c629c28f22776af19d9',1,'DatasetProcessor.DatasetProcessor.__init__()'],['../class_network_container_1_1_network_container.html#aa31e63badbad22f7baafa80143e079fc',1,'NetworkContainer.NetworkContainer.__init__()']]]
 ];
