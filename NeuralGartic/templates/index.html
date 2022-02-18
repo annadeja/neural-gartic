@@ -62,6 +62,9 @@
                     <div id="game-buttons">
                         <div class="game-button black" onclick="(()=>{col='#000',stk=2})()"></div>
                         <div class="game-button white" onclick="(()=>{col='#fff',stk=16})()"></div>
+                        <div class="game-button" onclick="$('#game-file').click()">Wczytaj</div>
+                        <input type="file" id="game-file" onchange="fn_Load()" hidden />
+                        <img id="game-image" onload="(()=>{ctx.fillRect(0, 0, 640, 360);ctx.drawImage(this, 0, 0, 640, 360);})()" hidden />
                         <div class="game-button send" onclick="fn_Send()">Wyślij</div>
                     </div>
                 </div>
@@ -263,6 +266,20 @@
                 "Arbuz",
 
             ];
+
+            async function fn_Load()
+            {
+                $('#game-file').click();
+                ;
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#game-image').attr({'src': e.target.result});
+                    //ctx.drawImage($('#game-image')[0], 0, 0, 640, 360);
+                }
+                reader.readAsDataURL($('#game-file')[0].files[0]);
+            }
 
             async function fn_Send()
             {
