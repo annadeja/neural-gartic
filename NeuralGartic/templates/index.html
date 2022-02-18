@@ -1,0 +1,370 @@
+<html>
+
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://malsup.github.io/jquery.form.js"></script> 
+    </head>
+
+    <body>
+
+        <form hidden method="post" action="/game">
+            <input type="file" id="form-file" />
+        </form>
+
+        <div id="summary-frame-outer" class="locked">
+            <div id="summary-frame-inner">
+
+                <div class="summary-frame">
+                    <div class="summary-title">Kategoria: <div class="summary-must 0"></div></div>
+                    <img class="summary-image 0"/>
+                    <div class="summary-title">Sieć rozpoznała: <div class="summary-got 0"></div></div>
+                </div>
+
+                <div class="summary-frame">
+                    <div class="summary-title">Kategoria: <div class="summary-must 1"></div></div>
+                    <img class="summary-image 1"/>
+                    <div class="summary-title">Sieć rozpoznała: <div class="summary-got 1"></div></div>
+                </div>
+
+                <div class="summary-frame">
+                    <div class="summary-title">Kategoria: <div class="summary-must 2"></div></div>
+                    <img class="summary-image 2"/>
+                    <div class="summary-title">Sieć rozpoznała: <div class="summary-got 2"></div></div>
+                </div>
+
+                <div class="summary-frame">
+                    <div class="summary-title">Kategoria: <div class="summary-must 3"></div></div>
+                    <img class="summary-image 3"/>
+                    <div class="summary-title">Sieć rozpoznała: <div class="summary-got 3"></div></div>
+                </div>
+
+                <div class="summary-frame">
+                    <div class="summary-title">Kategoria: <div class="summary-must 4"></div></div>
+                    <img class="summary-image 4"/>
+                    <div class="summary-title">Sieć rozpoznała: <div class="summary-got 4"></div></div>
+                </div>
+
+                <br/>
+                <div class="game-button" onclick="fn_GameStart()">Zagraj jeszcze raz!</div>
+                
+            </div>
+        </div>
+
+        <div id="con-outer">
+            <div id="con-inner">
+                
+                <div id="game-frame">
+                    <div id="game-title">
+                        <div id="game-title-smol">Runda <span id="game-round"></span>/5</div>
+                        Narysuj: <span id="game-category"></span>
+                    </div>
+                    <canvas id="game-canvas" width="640" height="360"></canvas>
+                    <div id="game-buttons">
+                        <div class="game-button black" onclick="(()=>{col='#000',stk=2})()"></div>
+                        <div class="game-button white" onclick="(()=>{col='#fff',stk=16})()"></div>
+                        <div class="game-button send" onclick="fn_Send()">Wyślij</div>
+                    </div>
+                </div>
+
+                
+
+            </div>
+
+            
+        </div>
+
+        <style>
+            html
+            {
+                user-select: none;
+            }
+            body
+            {
+                inset: 0;
+                margin: 0;
+                padding: 0;
+                background: linear-gradient(#c06, #c84);
+                font-size: 40px;
+                font-family: sans-serif;
+                font-weight: 600;
+                text-align: center;
+                color: white;
+                -webkit-text-stroke: 1px #404;
+                text-shadow: -2px 0px 2px #404, 2px 0px 2px #404, -2px 4px 2px #404, 2px 4px 2px #404;
+            }
+
+            #con-outer
+            {
+                position: absolute;
+                inset: 0;
+                display: flex;
+            }
+
+            #con-inner
+            {
+                margin: auto;
+            }
+
+            #game-title
+            {
+                margin: 16px;
+            }
+
+            #game-title-smol
+            {
+                font-size: 24px;
+                font-weight: 900;
+            }
+
+            #game-frame
+            {
+                border: #404 8px solid;
+                border-radius: 32px;
+                border-bottom-width: 16px;
+                background-color: #808;
+            }
+            #game-canvas
+            {
+                margin: 8px 32px;
+                border: 8px #404 solid;
+                border-radius: 8px;
+            }
+
+            #game-buttons
+            {
+                margin: 16px 24px;
+                display: flow-root;
+            }
+
+            .game-button
+            {
+                cursor: pointer;
+                margin: 0 8px;
+                border: #0008 4px solid;
+                border-radius: 16px;
+                border-bottom-width: 8px;
+                font-size: 24px;
+                background-color: #404;
+                display: inline-block;
+                min-width: 24px;
+                height: 24px;
+                line-height: 24px;
+                padding: 16px;
+            }
+
+            .game-button:active
+            {
+                border-bottom-width: 4px;
+                margin-top: 4px;
+            }
+
+            .game-button.black
+            {
+                background-color: #333;
+                float: left;
+            }
+            .game-button.white
+            {
+                background-color: #eee;
+                float: left;
+            }
+            .game-button.send
+            {
+                background-color: #8c8;
+                float: right;
+            }
+
+            .game-button.locked
+            {
+                cursor: not-allowed;
+                pointer-events: none;
+            }
+
+            #summary-frame-outer
+            {
+                position: absolute;
+                inset: 0;
+                display: flex;
+            }
+
+            #con-outer.locked, #summary-frame-outer.locked
+            {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            #summary-frame-inner
+            {
+                margin: auto;
+            }
+
+            .summary-frame
+            {
+                display: inline-block;
+                width: 18%;
+                position: relative;
+                margin-bottom: 16px;
+            }
+
+            .summary-title
+            {
+                font-size: 20px;
+                margin: 8px 0;
+            }
+
+            .summary-must, .summary-got
+            {
+                font-size: 32px;
+                font-weight: 900;
+            }
+
+            .summary-image
+            {
+                width: 100%;
+                border: #808 4px solid;
+                border-radius: 12px;
+                border-bottom-width: 8px;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+
+        <script>
+
+            var canvas = null;
+            var ctx = null;
+
+            var x = null;
+            var y = null;
+            var xprev = null;
+            var yprev = null;
+
+            var col = "#000";
+            var stk = 2;
+            var isDrawing = false;
+
+            var round = 1;
+            var mustDraw;
+            var gotDraw;
+            var images;
+
+            const cats = [
+                "Jabłko",
+                "Banan",
+                "Marchew",
+                "Ogórek",
+                "Stokrotka",
+                "Bakłażan",
+                "Hortensja",
+                "Pomarańcza",
+                "Storczyk",
+                "Róża",
+                "Pomidor",
+                "Arbuz",
+
+            ];
+
+            async function fn_Send()
+            {
+                $(".game-button.send").addClass('locked');
+
+                let blob = await new Promise((resolve, reject)=>{
+                    canvas.toBlob((a)=>{resolve(a)});
+                });
+                console.log(blob);
+                
+                let formData = new FormData();
+
+                formData.append("file", blob);
+
+                var request = new XMLHttpRequest();
+
+                request.onload = e=>{
+                    gotDraw.push(request.responseText);
+                    images.push(canvas.toDataURL());
+
+                    $(".game-button.send").removeClass('locked');
+                    if (round < 5)
+                    {
+                        round++;
+                        fn_UpdateBoard();
+                    }
+                    else
+                    {
+                        for (let i = 0; i < 5; i++)
+                        {
+                            $('.summary-must.'+i).text(mustDraw[i]);
+                            $('.summary-got.'+i).text(gotDraw[i]);
+                            $('.summary-image.'+i).attr({'src': images[i]});
+                        }
+                        $('#con-outer').addClass('locked');
+                        $('#summary-frame-outer').removeClass('locked');
+                    }
+                };
+
+                request.onerror = e=>{
+                    $(".game-button.send").removeClass('locked');
+                    alert("Whoops, wystąpił jakiś błąd X_X\nSpróbuj ponownie później!");
+                };
+
+                //request.onerror = request.onload;
+
+                request.open("POST", "/game");
+                request.send(formData);
+            }
+
+            function fn_UpdateBoard()
+            {
+                $('#game-round').text(round);
+                const what = cats[Math.floor(cats.length * Math.random())];
+                mustDraw.push(what);
+                $('#game-category').text(what);
+                ctx.fillRect(0, 0, 640, 360);
+            }
+
+            function fn_GameStart()
+            {
+                $('#con-outer').removeClass('locked');
+                $('#summary-frame-outer').addClass('locked');
+                round = 1;
+                mustDraw = new Array();
+                gotDraw = new Array();
+                images = new Array();
+                fn_UpdateBoard();
+            }
+
+            function fn_OnReady()
+            {
+                canvas = $('#game-canvas')[0];
+                ctx = canvas.getContext('2d');
+
+                ctx.fillStyle = "#fff";
+                fn_GameStart();
+
+                $('#game-canvas').bind('mousedown', (e)=>{ isDrawing = true; });
+                $('html').bind('mousemove', (e)=>{
+                    if (isDrawing)
+                    {
+                        x = e.clientX - canvas.offsetLeft - 8;
+                        y = e.clientY - canvas.offsetTop - 8;
+
+                        if (xprev != null && yprev != null) {
+                            ctx.beginPath();
+                            ctx.moveTo(xprev, yprev);
+                            ctx.lineTo(x, y);
+                            ctx.lineWidth = stk;
+                            ctx.strokeStyle = col;
+                            ctx.stroke();
+                        }
+                        xprev = x; yprev = y;
+                    }
+                });
+                $('html').bind('mouseup', (e)=>{xprev = null; yprev = null; isDrawing = false; })
+            }
+
+            fn_OnReady();
+        </script>
+
+    </body>
+
+</html>
