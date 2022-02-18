@@ -10,17 +10,24 @@ NET_MODEL_PATH = "modelv1.h5"
 
 @app.route('/')
 def index():
+    """Main endpoint of NeuralGartic app."""
+
     return render_template('index.html')
 
 
 @app.route('/game', methods=['POST'])
 def game():
+    """Endpoint that uses neural net to predict what user has drawn."""
     img = request.files['file'].read()
 
     return predict_class(img)
 
 
 def predict_class(image) -> str:
+    """Function that predicts what user has drawn.
+    :param: image an image of user's drawing.
+    :return str -> prediction
+    """
     model = tf.keras.models.load_model(NET_MODEL_PATH)
     if model != None:
         #image = tf.io.read_file(file_path)
